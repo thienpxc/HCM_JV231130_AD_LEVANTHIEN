@@ -1,5 +1,6 @@
 package ra.model;
 
+import java.util.Collection;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -127,8 +128,8 @@ public class Singer {
         System.out.printf("Tên ca sĩ: %s |", singerName);
         System.out.printf("Tuổi: %d | \n", age);
         System.out.printf("quốc tich: %s |", singerNationality);
-        System.out.printf("giới tính: %s |", singerGenre);
-        System.out.printf("thể loại: %s  \n", (singerGender ? "Dang hoat dong" : "khong hoat dong"));
+        System.out.printf("Mo ta: %s |", singerGenre);
+        System.out.printf("giới tính: %s  \n", (singerGender ? "Nam" : "Nu"));
 
     }
 
@@ -140,29 +141,40 @@ public class Singer {
             }
 
         }
-
     }
 
     public void updateSinger(Scanner scanner) {
-        System.out.println("Mời bạn nhập id ca sĩ cần sửa:");
+        int id = song.escape();
+        if (id == 0) {
+
+            return;
+        }
         int singerArrId = Integer.parseInt(scanner.nextLine());
         for (int i = 0; i < singerArr.length; i++) {
             if (singerArr[i] != null && singerArr[i].getSingerId() == singerArrId) {
                 singerArr[i] = inputData(scanner);
                 break;
             }
+            System.out.println("Không tìm thấy ca sĩ có id " + id + " để xóa.");
         }
     }
 
+    Song song = new Song();
+
     public void deleteSinger(Scanner scanner) {
-        System.out.println("Mời bạn nhập id ca sĩ cần xóa:");
-        byte singerArrId = Byte.parseByte(scanner.nextLine());
+        int id = song.escape();
+        if (id == 0) {
+
+            return;
+        }
         for (int i = 0; i < singerArr.length; i++) {
-            if (singerArr[i] != null && singerArr[i].getSingerId() == singerArrId) {
+            if (singerArr[i] != null && singerArr[i].getSingerId() == id) {
                 singerArr[i] = null;
-                break;
+                System.out.println("Ca sĩ có id " + id + " đã được xóa.");
+                return;
             }
         }
+        System.out.println("Không tìm thấy ca sĩ có id " + id + " để xóa.");
     }
 
     public Singer getSingerById(int id) {
@@ -173,6 +185,37 @@ public class Singer {
         }
         return null;
     }
+    
+
+
+    public void searchSongByNameOrGenre(Scanner scanner) {
+        System.out.println("Mời bạn nhập tên bài hát hoặc thể loại cần tìm:");
+        String search = scanner.nextLine();
+        for (int i = 0; i < singerArr.length; i++) {
+            if (singerArr[i] != null && (singerArr[i].singerName.contains(search) || singerArr[i].singerGenre.contains(search))) {
+                if (singerArr[i] != null) {
+                    singerArr[i].displayData();
+                }
+            }
+        }
+    }
+    public void searchSingerByNameOrGenre(Scanner scanner) {
+        boolean found = false;
+        System.out.println("Nhập từ khóa tìm kiếm (tên ca sĩ hoặc thể loại):");
+        String keyword = scanner.nextLine().toLowerCase();
+        for (Singer singer : singerArr) {
+            if (singer != null && (singer.getSingerName().toLowerCase().contains(keyword) || singer.getSingerGenre().toLowerCase().contains(keyword))) {
+                singer.displayData();
+                found = true;
+            }
+        }
+        // Nếu không tìm thấy ca sĩ thỏa mãn điều kiện
+        if (!found) {
+            System.out.println("Không tìm thấy ca sĩ.");
+        }
+    }
+
+
 
 
 }

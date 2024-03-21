@@ -4,9 +4,9 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Song  {
-    private static int nextBookId =1;
-    private int songId ;
+public class Song {
+    private static int nextBookId = 1;
+    private int songId;
     private String songName;
     private String songDescriptions;
     private Singer singer;
@@ -17,7 +17,7 @@ public class Song  {
     public Song() {
     }
 
-    public Song( String songName, String songDescriptions, String songWriter,Singer singer, int year, boolean songStatus) {
+    public Song(String songName, String songDescriptions, String songWriter, Singer singer, int year, boolean songStatus) {
         this.songId = nextBookId++;
         this.songName = songName;
         this.songDescriptions = songDescriptions;
@@ -66,7 +66,6 @@ public class Song  {
     }
 
 
-
     public String getSongWriter() {
         return songWriter;
     }
@@ -91,28 +90,28 @@ public class Song  {
         this.songStatus = songStatus;
     }
 
-//    @Override
-//    public String toString() {
-//        return "Song{" +
-//                "songId=" + songId +
-//                ", songName='" + songName + '\'' +
-//                ", songDescriptions='" + songDescriptions + '\'' +
-//                ", singerName='" + singer.getSingerName() + '\'' +
-//                ", songWriter='" + songWriter + '\'' +
-//                ", year=" + year +
-//                ", songStatus=" + songStatus +
-//                '}';
-//    }
-public void displayData() {
-    System.out.printf("Mã bài hát: %d |", nextBookId++);
-    System.out.printf("Tên bài hát: %s |", songName);
-    System.out.printf("Mô tả bài hát: %s | \n", songDescriptions);
-    System.out.printf("tên ca sĩ: %s |", singer.getSingerName());
-    System.out.printf("Người sáng tác: %s |", songWriter);
-    System.out.printf("Năm sáng tác: %d |",year);
-    System.out.printf("Trang thai: %s  \n", (songStatus ? "Đang hoạt động" : "Không hoạt động"));
 
-}
+    public void displayData() {
+        System.out.printf("Mã bài hát: %d |", nextBookId++);
+        System.out.printf("Tên bài hát: %s |", songName);
+        System.out.printf("Mô tả bài hát: %s | \n", songDescriptions);
+        System.out.printf("tên ca sĩ: %s |", singer.getSingerName());
+        System.out.printf("Người sáng tác: %s |", songWriter);
+        System.out.printf("Năm sáng tác: %d |", year);
+        System.out.printf("Trang thai: %s  \n", (songStatus ? "Đang hoạt động" : "Không hoạt động"));
+
+    }
+
+    public void showData() {
+        System.out.println("danh sach sinh vien hien tai \n");
+        for (int i = 0; i < songArr.length; i++) {
+            if (songArr[i] != null) {
+                songArr[i].displayData();
+            }
+
+        }
+
+    }
 
     private boolean validate(String regex, String input) {
         //dung regex de validate
@@ -135,28 +134,28 @@ public void displayData() {
     Scanner scanner = new Scanner(System.in);
     private Song[] songArr = new Song[100];
 
-    private Song inputData(Scanner scanner){
-        System.out.println("Mời bạn nhập tên bài hát:");
-        String songName = getInputFromUser(scanner,".+");
+    private Song inputData(Scanner scanner) {
+        System.out.println("Mời bạn nhập tên bài hát (chữ S và tối thiểu 4 ký tự):");
+        String songName = getInputFromUser(scanner, "S.{3,}");
         System.out.println("Mời bạn nhập mô tả bài hát:");
-        String songDescriptions = getInputFromUser(scanner,".+");
+        String songDescriptions = getInputFromUser(scanner, ".+");
         System.out.println("Mời bạn nhập Id tên ca sĩ:");
-        int singerId = Integer.parseInt(getInputFromUser(scanner,"\\d+"));
-        Singer singer =this.singer.getSingerById(singerId);
+        int singerId = Integer.parseInt(getInputFromUser(scanner, "\\d+"));
+        Singer singer = this.singer.getSingerById(singerId);
         if (singer == null) {
             System.out.println("Ca sĩ không tồn tại. Mời bạn nhập thông tin ca sĩ mới:");
             singer = this.singer.inputData(scanner);
         }
-        System.out.println("Mời bạn nhập tên người sáng tác :");
-        String songWriter = getInputFromUser(scanner,".+");
-        System.out.println("Mời bạn nhập năm phát hành :");
-        int year = Integer.parseInt(getInputFromUser(scanner,"\\d+"));
+        System.out.println("Mời bạn nhập tên người sáng tác (không được để trống) :");
+        String songWriter = getInputFromUser(scanner, ".+");
+        System.out.println("Mời bạn nhập năm phát hành (không được để trống) :");
+        int year = Integer.parseInt(getInputFromUser(scanner, "\\d+"));
         boolean songStatus = true;
-        return new Song(songName,songDescriptions,songWriter,singer,year,songStatus);
+        return new Song(songName, songDescriptions, songWriter, singer, year, songStatus);
     }
 
 
-    public void addSong(Scanner scanner){
+    public void addSong(Scanner scanner) {
         System.out.println("Mời bạn nhập số lượng bài hát cần thêm:");
         int number = Integer.parseInt(scanner.nextLine());
         for (int i = 0; i < songArr.length; i++) {
@@ -170,37 +169,87 @@ public void displayData() {
         }
     }
 
-    public void showSong() {
-        for (int i = 0; i < songArr.length; i++) {
-            if (songArr[i] != null) {
-                System.out.println(songArr[i].toString());
+    public void changeSongById() {
+        int id;
+        while (true) {
+            id = escape();
+            if (id == 0) {
+                break;
+            }
+            boolean found = false;
+
+            for (int i = 0; i < songArr.length; i++) {
+                if (songArr[i] != null && songArr[i].getSongId() == id) {
+                    songArr[i] = inputData(scanner);
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                System.out.println("Không tìm thấy bài hát có id " + id + ". Vui lòng nhập lại.");
+            } else {
+                break;
             }
         }
     }
 
-    public void changeSongById(){
-        System.out.println("Mời bạn nhập id bài hát cần sửa:");
+    public int escape() {
+        System.out.println("Mời bạn nhập hoặc nhập 0 để thoát:");
         int id = Integer.parseInt(scanner.nextLine());
-        for (int i = 0; i < songArr.length; i++) {
-            if (songArr[i] != null && songArr[i].getSongId() == id) {
-                songArr[i] = inputData(scanner);
-                break;
-            }
+        if (id == 0) {
+            System.out.println("Đã thoát khỏi chức năng .");
+            return id;
         }
+        return id;
     }
 
     public void deleteSongById(Scanner scanner) {
-        System.out.println("Mời bạn nhập id bài hát cần xóa:");
-        int id = Integer.parseInt(scanner.nextLine());
-        for (int i = 0; i < songArr.length; i++) {
-            if (songArr[i] != null && songArr[i].getSongId() == id) {
-                songArr[i] = null;
+        int id;
+        while (true) {
+            id = escape();
+            if (id == 0) {
+                break;
+            }
+
+            boolean found = false;
+            for (int i = 0; i < songArr.length; i++) {
+                if (songArr[i] != null && songArr[i].getSongId() == id) {
+                    // Di chuyển các phần tử phía sau lên một vị trí
+                    for (int j = i; j < songArr.length - 1; j++) {
+                        songArr[j] = songArr[j + 1];
+                    }
+                    // Đặt phần tử cuối cùng của mảng thành null
+                    songArr[songArr.length - 1] = null;
+                    System.out.println("Bài hát có id " + id + " đã được xóa.");
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                System.out.println("Không tìm thấy bài hát có id " + id + ". Vui lòng nhập lại.");
+            } else {
                 break;
             }
         }
+
     }
 
+    public void searchSongByArtistOrGenre() {
+        boolean found = false;
+        System.out.println("Nhập từ khóa tìm kiếm (tên ca sĩ hoặc thể loại):");
+        String keyword = scanner.nextLine().toLowerCase();
+        for (Song song : songArr) {
+            if (song != null && (song.songName.toLowerCase().contains(keyword) || song.songDescriptions.toLowerCase().contains(keyword))) {
+                song.displayData();
+                found = true;
+            }
+        }
+        if (!found) {
+            System.out.println("Không tìm thấy bài hát .");
+            searchSongByArtistOrGenre();
+        }
 
+    }
 
 
 }
