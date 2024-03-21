@@ -50,7 +50,7 @@ public class MusicManagement {
                 case 1:
                     song.searchSongByArtistOrGenre();
                 case 2:
-
+                    singer.searchSingerByNameOrGenre(scanner);
                 case 3:
 
                 case 4:
